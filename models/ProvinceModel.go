@@ -2,6 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
+// model
 type ProvinceModels struct {
 	ProvId     int        `gorm:"<-:false;column:prov_id;primary_key" json:"prov_id"`
 	ProvName   NullString `gorm:"column:prov_name" json:"prov_name"`
