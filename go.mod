@@ -1,4 +1,4 @@
-module github.com/jawimanagement/golibraries.git
+module github.com/jawimanagement/golibraries
 
 go 1.19
 
