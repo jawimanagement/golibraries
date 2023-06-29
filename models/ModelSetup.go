@@ -1,15 +1,13 @@
 package models
 
 import (
-	"gorm.io/driver/postgres"
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 
 	//arango "github.com/joselitofilho/gorm-arango/pkg"
 	// "github.com/arangodb/go-driver/http"
 	// driver "github.com/arangodb/go-driver"
 	"os"
-
-	"gorm.io/gorm/logger"
 
 	//arango "github.com/arangodb/go-driver"
 	// "github.com/arangodb/go-driver/http"
@@ -25,6 +23,7 @@ import (
 
 var ActiveUser string
 var DbConnection *gorm.DB
+var db *sql.DB
 
 // func Connection() (*gorm.DB,error){
 
@@ -32,31 +31,29 @@ var DbConnection *gorm.DB
 //	}
 var OpenDB *gorm.DB
 
-func DbConnect() (*sql.DB, *gorm.DB, error) {
-	//mysql connection
-	configDbMaster := os.Getenv("masterDsn")
-	sqlDB, err := sql.Open("pgx", configDbMaster)
-	dbMaster, err := gorm.Open(postgres.New(postgres.Config{
-		Conn:                 sqlDB,
-		PreferSimpleProtocol: true,
-	}), &gorm.Config{
-		Logger:      logger.Default.LogMode(logger.Info),
-		QueryFields: true,
-		NowFunc: func() time.Time {
-			loc, _ := time.LoadLocation("Asia/Jakarta")
-			return time.Now().In(loc)
-		},
-	})
-	if err != nil {
-		return nil, nil, fmt.Errorf("Master Database Connection Error")
+func DbConnect() (*sql.DB, error) {
+	// Capture connection properties.
+	cfg := mysql.Config{
+		User:   os.Getenv("DBUSER"),
+		Passwd: os.Getenv("DBPASS"),
+		Net:    "tcp",
+		Addr:   "127.0.0.1:3306",
+		DBName: "recordings",
 	}
-	sqlDB.SetMaxIdleConns(100)
-	// SetMaxOpenConns sets the maximum number of open connections to the database.
-	sqlDB.SetMaxOpenConns(100000)
-	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
-	sqlDB.SetConnMaxLifetime(2 * time.Minute)
-	OpenDB = dbMaster
-	return sqlDB, dbMaster, nil
+
+	// dbMaster, err := gorm.Open(cfg.FormatDSN())
+	// Get a database handle.
+	var err error
+	db, err = sql.Open("mysql", cfg.FormatDSN())
+	if err != nil {
+		return nil, err
+	}
+
+	pingErr := db.Ping()
+	if pingErr != nil {
+		return nil, pingErr
+	}
+	return db, nil
 }
 
 // parse null string on model
