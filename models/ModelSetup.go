@@ -1,13 +1,11 @@
 package models
 
 import (
-	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 
 	//arango "github.com/joselitofilho/gorm-arango/pkg"
 	// "github.com/arangodb/go-driver/http"
 	// driver "github.com/arangodb/go-driver"
-	"os"
 
 	//arango "github.com/arangodb/go-driver"
 	// "github.com/arangodb/go-driver/http"
@@ -31,20 +29,20 @@ var db *sql.DB
 //	}
 var OpenDB *gorm.DB
 
+const (
+	Username string = ""
+	Password string = ""
+	DbName   string = ""
+)
+
 func DbConnect() (*sql.DB, error) {
 	// Capture connection properties.
-	cfg := mysql.Config{
-		User:   os.Getenv("DBUSER"),
-		Passwd: os.Getenv("DBPASS"),
-		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: "recordings",
-	}
+	dsn := fmt.Sprintf("%v:%v@/%v", Username, Password, DbName)
 
 	// dbMaster, err := gorm.Open(cfg.FormatDSN())
 	// Get a database handle.
 	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN())
+	db, err = sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}
