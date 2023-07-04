@@ -11,8 +11,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var ActiveUser string
-
 var sqlDb *sql.DB
 var OpenDB *gorm.DB
 
@@ -26,11 +24,9 @@ const (
 func DbConnect() (*sql.DB, *gorm.DB, error) {
 	// Capture connection properties.
 	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v", Username, Password, Tcp, DbName)
-
-	// dbMaster, err := gorm.Open(cfg.FormatDSN())
 	// Get a database handle.
 	connSql, err := sql.Open("mysql", dsn)
-
+	// connection config
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		Conn: connSql,
 	}), &gorm.Config{
@@ -41,6 +37,7 @@ func DbConnect() (*sql.DB, *gorm.DB, error) {
 			return time.Now().In(loc)
 		},
 	})
+
 	if err != nil {
 		return nil, nil, err
 	}
