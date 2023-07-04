@@ -2,21 +2,9 @@ package models
 
 import (
 	"context"
-	"log"
-
-	//arango "github.com/joselitofilho/gorm-arango/pkg"
-	// "github.com/arangodb/go-driver/http"
-	// driver "github.com/arangodb/go-driver"
-	"os"
-
-	//arango "github.com/arangodb/go-driver"
-	// "github.com/arangodb/go-driver/http"
 	"fmt"
-	// "github.com/fatih/structs"
-	// "strings"
-	// "os"
-
-	// "reflect"
+	"log"
+	"os"
 
 	driver "github.com/arangodb/go-driver"
 	gohttp "github.com/arangodb/go-driver/http"
