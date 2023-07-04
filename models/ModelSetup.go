@@ -8,11 +8,12 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var ActiveUser string
 
-// var db *mysql.
+var sqlDb *sql.DB
 var OpenDB *gorm.DB
 
 const (
@@ -22,20 +23,35 @@ const (
 	Tcp      string = "203.161.184.81:3306"
 )
 
-func DbConnect() (*gorm.DB, error) {
+func DbConnect() (*sql.DB, *gorm.DB, error) {
 	// Capture connection properties.
 	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v", Username, Password, Tcp, DbName)
 
 	// dbMaster, err := gorm.Open(cfg.FormatDSN())
 	// Get a database handle.
-	// connSql, _ := sql.Open("mysql", dsn)
+	connSql, err := sql.Open("mysql", dsn)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.New(mysql.Config{
+		Conn: connSql,
+	}), &gorm.Config{
+		Logger:      logger.Default.LogMode(logger.Info),
+		QueryFields: true,
+		NowFunc: func() time.Time {
+			loc, _ := time.LoadLocation("Asia/Jakarta")
+			return time.Now().In(loc)
+		},
+	})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return db, nil
+	connSql.SetMaxIdleConns(100)
+	// SetMaxOpenConns sets the maximum number of open connections to the database.
+	connSql.SetMaxOpenConns(100000)
+	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
+	connSql.SetConnMaxLifetime(2 * time.Minute)
+
+	return sqlDb, db, nil
 
 }
 
