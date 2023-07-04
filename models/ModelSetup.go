@@ -1,23 +1,13 @@
 package models
 
 import (
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	//arango "github.com/joselitofilho/gorm-arango/pkg"
-	// "github.com/arangodb/go-driver/http"
-	// driver "github.com/arangodb/go-driver"
-
-	//arango "github.com/arangodb/go-driver"
-	// "github.com/arangodb/go-driver/http"
-	"fmt"
-	// "github.com/fatih/structs"
-	// "strings"
-	// "os"
-	"encoding/json"
-	// "reflect"
-	"database/sql"
-	"time"
 )
 
 var ActiveUser string
