@@ -1,6 +1,7 @@
 package models
 
 import (
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	//arango "github.com/joselitofilho/gorm-arango/pkg"
@@ -20,38 +21,32 @@ import (
 )
 
 var ActiveUser string
-var DbConnection *gorm.DB
-var db *sql.DB
 
-// func Connection() (*gorm.DB,error){
-
-//		return dbMaster,nil
-//	}
+// var db *mysql.
 var OpenDB *gorm.DB
 
 const (
-	Username string = ""
-	Password string = ""
-	DbName   string = ""
+	Username string = "pusdikl7_jawievent"
+	Password string = "Wonderwoman122.."
+	DbName   string = "pusdikl7_jawievent"
+	Tcp      string = "203.161.184.81:3306"
 )
 
-func DbConnect() (*sql.DB, error) {
+func DbConnect() (*gorm.DB, error) {
 	// Capture connection properties.
-	dsn := fmt.Sprintf("%v:%v@/%v", Username, Password, DbName)
+	dsn := fmt.Sprintf("%v:%v@tcp(%v)/%v", Username, Password, Tcp, DbName)
 
 	// dbMaster, err := gorm.Open(cfg.FormatDSN())
 	// Get a database handle.
-	var err error
-	db, err = sql.Open("mysql", dsn)
+	// connSql, _ := sql.Open("mysql", dsn)
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	pingErr := db.Ping()
-	if pingErr != nil {
-		return nil, pingErr
-	}
 	return db, nil
+
 }
 
 // parse null string on model
