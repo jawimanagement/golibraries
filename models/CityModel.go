@@ -19,6 +19,10 @@ func (p *CityModels) TableName() string {
 	return "cities"
 }
 
+func (p *CityModelPreload) TableName() string {
+	return "cities"
+}
+
 func (p *CityModels) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
